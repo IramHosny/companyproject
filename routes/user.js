@@ -2,11 +2,12 @@ const express = require("express");
 const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
 const userRouter = express.Router();
-const {registerRules,loginRules,validation} = require("../middleware/validator");
+
+const { registerRules, loginRules, validation } = require("../middleware/validator");
 const isAuth = require('../middleware/passport');
 
-//register new user "post"
 // REGISTER
 userRouter.post("/register", registerRules(), validation, async (req, res) => {
   const { name, lastname, adress, phonenumber, email, password, company, tax_number, role } = req.body;
@@ -14,22 +15,18 @@ userRouter.post("/register", registerRules(), validation, async (req, res) => {
   try {
     const newuser = new User({ name, lastname, adress, phonenumber, email, password, company, tax_number, role });
 
-    // check if email already exists
     const searcheduser = await User.findOne({ email });
     if (searcheduser) {
-      return res.status(400).send({ msg: "email already exist" }); // ✅ return ajouté ici
+      return res.status(400).send({ msg: "email already exist" });
     }
 
-    // hash password
     const salt = 10;
     const gensalt = await bcrypt.genSalt(salt);
     const hashedpassword = await bcrypt.hash(password, gensalt);
     newuser.password = hashedpassword;
 
-    // save user
     const newUserToken = await newuser.save();
 
-    // generate token
     const payload = {
       _id: newUserToken._id,
       name: newUserToken.name,
@@ -45,7 +42,6 @@ userRouter.post("/register", registerRules(), validation, async (req, res) => {
   }
 });
 
-// LOGIN
 // LOGIN
 userRouter.post("/login", loginRules(), validation, async (req, res) => {
   const { email, password } = req.body;
@@ -78,41 +74,38 @@ userRouter.post("/login", loginRules(), validation, async (req, res) => {
   }
 });
 
-//get current profile
-userRouter.get("/current", isAuth(),(req,res) => {
-    res.status(200).send({user:req.user});
-})
+// GET current user
+userRouter.get("/current", isAuth(), (req, res) => {
+  res.status(200).send({ user: req.user });
+});
 
-//update user
+// UPDATE user
 userRouter.put("/:_id", async (req, res) => {
-    try {
-      let result = await User.findByIdAndUpdate(
-        { _id: req.params._id },
-        { $set: req.body }
-      );
-      res.send({ msg: " user updated " });
-    } catch (error) {
-      res.send({ msg: "fail" });
-      console.log(error);
-    }
-  });
+  try {
+    await User.findByIdAndUpdate({ _id: req.params._id }, { $set: req.body });
+    res.send({ msg: "user updated" });
+  } catch (error) {
+    res.send({ msg: "fail" });
+    console.log(error);
+  }
+});
 
-//get allusers
+// GET all users
 userRouter.get("/allusers", async (req, res) => {
   try {
-    let result = await User.find();
-    res.send({ users: result, msg: "all users " });
+    const result = await User.find();
+    res.send({ users: result, msg: "all users" });
   } catch (error) {
     res.send({ msg: "fail" });
     console.log(error);
   }
 });
 
-//delete user 
+// DELETE user
 userRouter.delete("/:_id", async (req, res) => {
   try {
-    let result = await User.findByIdAndDelete({ _id: req.params._id });
-    res.send({ msg: "user deleted " });
+    await User.findByIdAndDelete({ _id: req.params._id });
+    res.send({ msg: "user deleted" });
   } catch (error) {
     res.send({ msg: "fail" });
     console.log(error);
@@ -120,6 +113,54 @@ userRouter.delete("/:_id", async (req, res) => {
 });
 
 
+// 🔐 MOT DE PASSE OUBLIÉ
 
+// Envoi d’email avec lien de réinitialisation
+userRouter.post("/forgot-password", async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "Utilisateur introuvable." });
 
-module.exports = userRouter; 
+    const token = jwt.sign({ id: user._id }, "secret_reset", { expiresIn: "15m" });
+    const resetLink = `http://localhost:3000/reset-password/${token}`;
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.MAIL_USER, // 📧 Remplacez ici par votre email
+        pass: process.env.MAIL_PASS, // 🔐 Mot de passe d'application Gmail
+      },
+    });
+
+    await transporter.sendMail({
+      from: '"Support Abdedaiem" <hosnyiram18@gmail.com>',
+      to: email,
+      subject: "Réinitialisation de mot de passe",
+      html: `<p>Bonjour,<br/>Cliquez ici pour réinitialiser votre mot de passe :<br/><a href="${resetLink}">${resetLink}</a></p>`,
+    });
+
+    res.json({ message: "Email de réinitialisation envoyé avec succès." });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Erreur lors de l'envoi de l'email." });
+  }
+});
+
+// Mise à jour du mot de passe à partir du lien
+userRouter.post("/reset-password/:token", async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  try {
+    const decoded = jwt.verify(token, "secret_reset");
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await User.findByIdAndUpdate(decoded.id, { password: hashedPassword });
+    res.json({ message: "Mot de passe mis à jour avec succès." });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Lien invalide ou expiré." });
+  }
+});
+
+module.exports = userRouter;

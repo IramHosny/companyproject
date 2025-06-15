@@ -1,27 +1,26 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import AddArticle from './AddArticle';
-import Table from 'react-bootstrap/Table';
 import { deletearticle } from '../redux/articleSlice';
-import Swal from 'sweetalert2';
 import EditArticle from './EditArticle';
+import Swal from 'sweetalert2';
 
 function ArticleListAdmin({ ping, setping }) {
   const user = useSelector(state => state.user?.user);
   const isAuth = localStorage.getItem('token');
-  const articles = useSelector(state => state.article?.articlelist);
+  const articles = useSelector(state => state.article?.articlelist || []);
   const dispatch = useDispatch();
 
-  const alert = (id) => {
+  const handleDelete = (id) => {
     Swal.fire({
       title: "Voulez-vous supprimer cet article ?",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Supprimer",
-      cancelButtonText: "Annuler"
+      confirmButtonText: "Oui, supprimer",
+      cancelButtonText: "Annuler",
     }).then((result) => {
       if (result.isConfirmed) {
-        dispatch(deletearticle(id))
-          .then(() => setping(!ping));
+        dispatch(deletearticle(id)).then(() => setping(!ping));
         Swal.fire("Supprimé", "L'article a été supprimé.", "success");
       }
     });
@@ -29,62 +28,64 @@ function ArticleListAdmin({ ping, setping }) {
 
   return (
     <>
-      {(isAuth && user?.role === "admin") ? (
-        <div className='restaurant-list-container' style={{ marginTop: '5%' }}>
-          
-          {/* ✅ Ajout d'article */}
-          <div className="d-flex justify-content-end mb-3">
+      {isAuth && user?.role === "admin" ? (
+        <div className="p-6 bg-gradient-to-br from-blue-50 to-orange-50 min-h-screen">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-blue-700">📦 Liste des Articles</h2>
             <AddArticle ping={ping} setping={setping} />
           </div>
 
-          {/* ✅ Tableau des articles */}
-          <div className="table-container">
-            <Table striped className='article-table'>
-              <thead>
+          <div className="overflow-x-auto bg-white shadow-md rounded-lg p-4">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-blue-600 text-white text-sm">
                 <tr>
-                  <th>Nom</th>
-                  <th>Catégorie</th>
-                  <th>Description</th>
-                  <th>Prix</th>
-                  <th>Image</th>
-                  <th>Éditer</th>
-                  <th>Supprimer</th>
+                  <th className="px-4 py-2 text-left">Nom</th>
+                  <th className="px-4 py-2 text-left">Catégorie</th>
+                  <th className="px-4 py-2 text-left">Description</th>
+                  <th className="px-4 py-2 text-left">Prix</th>
+                  <th className="px-4 py-2 text-left">Image</th>
+                  <th className="px-4 py-2 text-center">Éditer</th>
+                  <th className="px-4 py-2 text-center">Supprimer</th>
                 </tr>
               </thead>
-              <tbody>
-                {articles?.map(el => (
-                  <tr key={el._id}>
-                    <td>{el.name}</td>
-                    <td>{el.catégorie}</td>
-                    <td>{el.description}</td>
-                    <td>{el.prix}</td>
-                    <td>
-                      <img src={el.image} alt="article" style={{ width: '50px', height: '50px', objectFit: 'cover' }} />
+              <tbody className="text-sm divide-y divide-gray-100">
+                {articles.map((el) => (
+                  <tr key={el._id} className="hover:bg-orange-50 transition">
+                    <td className="px-4 py-2 font-medium">{el.name}</td>
+                    <td className="px-4 py-2">{el.categorie}</td>
+                    <td className="px-4 py-2">{el.description}</td>
+                    <td className="px-4 py-2 text-orange-600 font-semibold">{el.prix} DT</td>
+                    <td className="px-4 py-2">
+                      <img
+                        src={el.images?.[0] || "/default.jpg"}
+                        alt="article"
+                        className="w-14 h-14 object-cover rounded shadow-md"
+                      />
                     </td>
-                    <td>
+                    <td className="px-4 py-2 text-center">
                       <EditArticle article={el} ping={ping} setping={setping} />
                     </td>
-                    <td>
-                      <button className='btn_delete' onClick={() => alert(el._id)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke="#000000" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path stroke="none" d="M0 0h24v24H0z" />
-                          <line x1="4" y1="7" x2="20" y2="7" />
-                          <line x1="10" y1="11" x2="10" y2="17" />
-                          <line x1="14" y1="11" x2="14" y2="17" />
-                          <path d="M5 7l1 12a2 2 0 002 2h8a2 2 0 002 -2l1 -12" />
-                          <path d="M9 7v-3a1 1 0 011 -1h4a1 1 0 011 1v3" />
-                        </svg>
+                    <td className="px-4 py-2 text-center">
+                      <button
+                        onClick={() => handleDelete(el._id)}
+                        className="text-red-600 hover:text-red-800 transition"
+                      >
+                        🗑️
                       </button>
                     </td>
                   </tr>
                 ))}
               </tbody>
-            </Table>
+            </table>
           </div>
         </div>
       ) : (
         <div style={{ textAlign: 'center', padding: '5%' }}>
-          <img src="https://drudesk.com/sites/default/files/2018-02/404-error-page-not-found.jpg" alt="not found" style={{ width: "80%" }} />
+          <img
+            src="https://drudesk.com/sites/default/files/2018-02/404-error-page-not-found.jpg"
+            alt="Not found"
+            style={{ width: "80%" }}
+          />
         </div>
       )}
     </>

@@ -6,6 +6,8 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 import { Link, useNavigate } from 'react-router-dom';
 import { logout } from '../redux/userSlice';
 import { useDispatch, useSelector } from "react-redux";
+import  { useEffect } from 'react';
+
 
 function Navbarr() {
   const navigate = useNavigate();
@@ -13,12 +15,23 @@ function Navbarr() {
   const user = useSelector((state) => state.user?.user);
   const isAuth = localStorage.getItem("token");
 
+
+
   return (
     <Navbar collapseOnSelect expand="lg" className="bg-body-tertiary">
       <Container fluid>
-        <Navbar.Brand as={Link} to="/">
-          <img src='./slogo.png' width={'150px'} height={'30px'} style={{ display: 'block', marginBottom: '-60px' }} />
-        </Navbar.Brand>
+<Navbar.Brand as={Link} to="/">
+  <img
+    src="./slogo.png"
+    alt="Logo de l'entreprise"
+    style={{
+      height: '100px',     // hauteur adaptée
+      width: 'auto',      // garde le ratio
+      objectFit: 'contain',
+      display: 'block',
+    }}
+  />
+</Navbar.Brand>
 
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
@@ -37,7 +50,16 @@ function Navbarr() {
   <NavDropdown.Item as={Link} to="/cabine/articles">Cabines</NavDropdown.Item>
   <NavDropdown.Item as={Link} to="/tables et chaises/articles">Tables & chaises</NavDropdown.Item>
   <NavDropdown.Item as={Link} to="/categorie">Catalogue de produits</NavDropdown.Item>
+   <NavDropdown.Item as={Link} to="/articles">Tous nos produits</NavDropdown.Item>
 </NavDropdown>
+
+<Nav.Link as={Link} to="/promotions" style={{ fontWeight: 'bold' }}>
+  Promotions
+</Nav.Link>
+
+<Nav.Link as={Link} to="/service" style={{ fontWeight: 'bold' }}>
+  Service
+</Nav.Link>
 
 
             <Nav.Link as={Link} to="/contact" style={{ fontWeight: 'bold' }}>
@@ -61,8 +83,30 @@ function Navbarr() {
                       1 -96 0zm336-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/>
                   </svg>
                 </Nav.Link>
+               <Nav.Link as={Link} to="/mesnotifications" style={{ position: 'relative', padding: '5px 10px' }}>
+  <div style={{
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px',
+    position: 'relative'
+  }}>
+    <span style={{ fontSize: '1.2rem' }}>🔔</span>
+  </div>
+
+  {/* Animation keyframes inline (injectée dans le DOM) */}
+  <style>
+    {`
+      @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.3); }
+        100% { transform: scale(1); }
+      }
+    `}
+  </style>
+</Nav.Link>
               </>
             )}
+ 
 
             {isAuth && user?.role === "admin" && (
               <Nav.Link as={Link} to="/dashboard" style={{ fontWeight: 'bold', fontStyle: 'italic', fontFamily: 'cursive' }}>

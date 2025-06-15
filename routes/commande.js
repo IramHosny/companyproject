@@ -1,53 +1,76 @@
 const express = require("express");
-const order = require("../models/commande");
-const orderRouter = express.Router();
+const router = express.Router();
+const Order = require("../models/commande");
+const Notification = require("../models/Notification");
+const sendOrderStatusMail = require("../utils/sendMail");
 
-//get all orders
-orderRouter.get("/allorders", async (req, res) => {
-    try {
-      let result = await order.find();
-      res.send({ order: result, msg: "all orders " });
-    } catch (error) {
-      res.send({ msg: "fail" });
-      console.log(error);
-    }
-  });
+// ✅ GET - récupérer toutes les commandes
+router.get("/allorders", async (req, res) => {
+  try {
+    const result = await Order.find();
+    res.status(200).send({ order: result, msg: "✅ Liste des commandes récupérée" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ msg: "❌ Échec récupération commandes" });
+  }
+});
 
-//add new order
-orderRouter.post("/addorder", async (req, res) => {
-    try {
-      let neworder = new order({ ...req.body });
-      let result = await neworder.save();
-      res.send({ order: result, msg: "new order added" });
-    } catch (error) {
-      res.send({ msg: "fail" });
-      console.log(error);
-    }
-  });
+// ✅ POST - ajouter une nouvelle commande
+router.post("/addorder", async (req, res) => {
+  try {
+    const newOrder = new Order({ ...req.body });
+    const result = await newOrder.save();
+    res.status(201).send({ order: result, msg: "✅ Nouvelle commande ajoutée" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ msg: "❌ Échec ajout commande" });
+  }
+});
 
-//update order
-orderRouter.put("/:_id", async (req, res) => {
-    try {
-      let result = await order.findByIdAndUpdate(
-        { _id: req.params._id },
-        { $set: {orderStatus:"acceptée"} }
-      );
-      res.send({ msg: " order updated " });
-    } catch (error) {
-      res.send({ msg: "fail" });
-      console.log(error);
-    }
-  });
+// ✅ PUT - mise à jour du statut + mail + notification (email dans userId)
+router.put("/:_id", async (req, res) => {
+  try {
+    const { orderStatus } = req.body;
 
-  //delete order
-  orderRouter.delete("/:_id", async (req, res) => {
-    try {
-      let result = await order.findByIdAndDelete({ _id: req.params._id });
-      res.send({ msg: "order deleted " });
-    } catch (error) {
-      res.send({ msg: "fail" });
-      console.log(error);
+    const orderToUpdate = await Order.findById(req.params._id);
+    if (!orderToUpdate) {
+      return res.status(404).send({ msg: "❌ Commande non trouvée" });
     }
-  });
-  
-module.exports = orderRouter;
+
+    await Order.findByIdAndUpdate(req.params._id, {
+      $set: { orderStatus },
+    });
+
+    // ✅ Envoi du mail
+    await sendOrderStatusMail(
+      orderToUpdate.current_user,
+      orderToUpdate.user_fullname,
+      orderStatus,
+      orderToUpdate._id
+    );
+
+    // ✅ Notification avec email (pas ObjectId)
+    await Notification.create({
+      userId: orderToUpdate.current_user, // email directement
+      message: `📦 Votre commande ${orderToUpdate._id} a été mise à jour : ${orderStatus}`,
+    });
+
+    res.status(200).send({ msg: "✅ Statut mis à jour, email et notification envoyés" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ msg: "❌ Erreur lors de la mise à jour du statut" });
+  }
+});
+
+// ✅ DELETE - supprimer une commande
+router.delete("/:_id", async (req, res) => {
+  try {
+    await Order.findByIdAndDelete({ _id: req.params._id });
+    res.status(200).send({ msg: "✅ Commande supprimée" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ msg: "❌ Échec suppression commande" });
+  }
+});
+
+module.exports = router;

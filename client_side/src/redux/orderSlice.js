@@ -22,15 +22,16 @@ export const addorder = createAsyncThunk("order/add", async(order) => {
 });
 
 //update order 
-export const updateorder = createAsyncThunk("order/update", async({id}) => {
+export const updateorder = createAsyncThunk("order/update", async({id, status}) => {
     try {
-        let result = axios.put(`http://localhost:5000/commande/${id}`);
-        return result ; 
+        let result = await axios.put(`http://localhost:5000/commande/${id}`, {
+            orderStatus: status
+        });
+        return result;
     } catch (error) {
         console.log(error);
     }
 });
-
 //remove order
 export const removeorder = createAsyncThunk("order/delete", async(id) => {
     try {

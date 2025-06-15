@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { userEdit } from '../redux/userSlice';
 import './fcss/UserProfile.css';
-import Button from 'react-bootstrap/Button';
+import { Zoom } from 'react-awesome-reveal';
+import { FaUser, FaMapMarkerAlt, FaPhone, FaBuilding, FaIdCard } from 'react-icons/fa';
 
 function UserProfile() {
   const user = useSelector((state) => state.user?.user);
@@ -27,51 +28,99 @@ function UserProfile() {
   };
 
   return (
-    <div className="profile-container">
-      <div className="profile-avatar-container">
-        <img
-          className="profile-avatar"
-          src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-          alt="avatar"
-        />
-        <h3 className="text-center mt-2">Bonjour {user?.lastname} {user?.name}</h3>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50 py-10 px-4">
+      <Zoom triggerOnce>
+        <div className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-xl">
+          <div className="flex flex-col items-center mb-6">
+            <img
+              className="w-28 h-28 rounded-full border-4 border-orange-400 shadow-lg mb-3 hover:scale-105 transition-transform"
+              src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+              alt="avatar"
+            />
+            <h3 className="text-xl font-bold text-blue-800">
+              Bonjour {user?.lastname} {user?.name}
+            </h3>
+          </div>
 
-      <form className="profile-form">
-        <div className="form-group">
-          <label>Nom</label>
-          <input type="text" defaultValue={user?.lastname} onChange={(e) => setedituser({ ...edituser, lastname: e.target.value })} />
-        </div>
+          <form className="space-y-4">
+            <div className="flex items-center gap-3 bg-orange-50 p-3 rounded-lg border border-orange-200 shadow-sm">
+              <FaUser className="text-orange-500" />
+              <input
+                type="text"
+                placeholder="Nom"
+                defaultValue={user?.lastname}
+                onChange={(e) => setedituser({ ...edituser, lastname: e.target.value })}
+                className="w-full p-2 rounded border border-gray-300"
+              />
+            </div>
 
-        <div className="form-group">
-          <label>Prénom</label>
-          <input type="text" defaultValue={user?.name} onChange={(e) => setedituser({ ...edituser, name: e.target.value })} />
-        </div>
+            <div className="flex items-center gap-3 bg-orange-50 p-3 rounded-lg border border-orange-200 shadow-sm">
+              <FaUser className="text-orange-500" />
+              <input
+                type="text"
+                placeholder="Prénom"
+                defaultValue={user?.name}
+                onChange={(e) => setedituser({ ...edituser, name: e.target.value })}
+                className="w-full p-2 rounded border border-gray-300"
+              />
+            </div>
 
-        <div className="form-group">
-          <label>Adresse</label>
-          <input type="text" defaultValue={user?.adress} onChange={(e) => setedituser({ ...edituser, adress: e.target.value })} />
-        </div>
+            <div className="flex items-center gap-3 bg-orange-50 p-3 rounded-lg border border-orange-200 shadow-sm">
+              <FaMapMarkerAlt className="text-orange-500" />
+              <input
+                type="text"
+                placeholder="Adresse"
+                defaultValue={user?.adress}
+                onChange={(e) => setedituser({ ...edituser, adress: e.target.value })}
+                className="w-full p-2 rounded border border-gray-300"
+              />
+            </div>
 
-        <div className="form-group">
-          <label>Téléphone</label>
-          <input type="text" defaultValue={user?.phonenumber} onChange={(e) => setedituser({ ...edituser, phonenumber: e.target.value })} />
-        </div>
+            <div className="flex items-center gap-3 bg-orange-50 p-3 rounded-lg border border-orange-200 shadow-sm">
+              <FaPhone className="text-orange-500" />
+              <input
+                type="text"
+                placeholder="Téléphone"
+                defaultValue={user?.phonenumber}
+                onChange={(e) => setedituser({ ...edituser, phonenumber: e.target.value })}
+                className="w-full p-2 rounded border border-gray-300"
+              />
+            </div>
 
-        <div className="form-group">
-          <label>Entreprise</label>
-          <input type="text" defaultValue={user?.company} onChange={(e) => setedituser({ ...edituser, company: e.target.value })} />
-        </div>
+            <div className="flex items-center gap-3 bg-orange-50 p-3 rounded-lg border border-orange-200 shadow-sm">
+              <FaBuilding className="text-orange-500" />
+              <input
+                type="text"
+                placeholder="Entreprise"
+                defaultValue={user?.company}
+                onChange={(e) => setedituser({ ...edituser, company: e.target.value })}
+                className="w-full p-2 rounded border border-gray-300"
+              />
+            </div>
 
-        <div className="form-group">
-          <label>Matricule fiscale</label>
-          <input type="text" defaultValue={user?.tax_number} onChange={(e) => setedituser({ ...edituser, tax_number: e.target.value })} />
-        </div>
+            <div className="flex items-center gap-3 bg-orange-50 p-3 rounded-lg border border-orange-200 shadow-sm">
+              <FaIdCard className="text-orange-500" />
+              <input
+                type="text"
+                placeholder="Matricule fiscale"
+                defaultValue={user?.tax_number}
+                onChange={(e) => setedituser({ ...edituser, tax_number: e.target.value })}
+                className="w-full p-2 rounded border border-gray-300"
+              />
+            </div>
 
-        <div className="text-center mt-4">
-          <Button variant="primary" onClick={handleSubmit}>Modifier</Button>
+            <div className="text-center">
+              <button
+                type="button"
+                onClick={handleSubmit}
+                className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-2 rounded-full shadow"
+              >
+                Modifier
+              </button>
+            </div>
+          </form>
         </div>
-      </form>
+      </Zoom>
     </div>
   );
 }

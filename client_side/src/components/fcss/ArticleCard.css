@@ -86,3 +86,8 @@
 .details-btn:hover {
   background-color: #c9d6e2;
 }
+.article-reference {
+  font-weight: bold;
+  color: #555;
+  margin-top: 4px;
+}

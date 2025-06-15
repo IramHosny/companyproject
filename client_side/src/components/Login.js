@@ -40,9 +40,14 @@ function Login() {
               }, 1000); } }/>
             </form>
             <div className="login-netoworks">
-              <p>Vous n'avez pas un compte? <Link to="/subscribe"><span>S'inscrire</span></Link></p>
-              <div className="login-or"><hr /></div>
               
+              <p>
+  <Link to="/forgot-password"><span>Mot de passe oublié ?</span></Link>
+</p>
+<p>
+  Vous n'avez pas un compte? <Link to="/subscribe"><span>S'inscrire</span></Link>
+</p>
+
             </div>
           </div>
         </div>

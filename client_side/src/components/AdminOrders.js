@@ -1,65 +1,139 @@
-import React from 'react'
-import {  useDispatch,useSelector} from 'react-redux';
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import OrderItems from './OrderItems';
-import { removeorder, updateorder } from '../redux/orderSlice';
+import { updateorder } from '../redux/orderSlice';
+import Swal from 'sweetalert2';
 
 function AdminOrders() {
-    const orders = useSelector((state)=>state.order?.order);
-    const isAuth = localStorage.getItem('token');
-    const user = useSelector((state)=>state.user?.user);
-    const dispatch = useDispatch();
+  const orders = useSelector((state) => state.order?.order);
+  const isAuth = localStorage.getItem('token');
+  const user = useSelector((state) => state.user?.user);
+  const dispatch = useDispatch();
 
+  const [filterStatus, setFilterStatus] = useState('all');
+
+  const handleFilterChange = (status) => setFilterStatus(status);
+
+  const handleUpdateStatus = (id, status) => {
+    dispatch(updateorder({ id, status }))
+      .then(() => {
+        Swal.fire({
+          icon: 'success',
+          title: `Commande ${status}`,
+          showConfirmButton: false,
+          timer: 1200
+        });
+      });
+  };
+
+  const filteredOrders = orders?.filter((el) =>
+    filterStatus === 'all' ? true : el?.orderStatus === filterStatus
+  );
 
   return (
-        <>
-        <header className="bg-white shadow">
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold tracking-tight text-gray-900"> Liste des commandes </h1>
-    </div>
-  </header>
-            {isAuth && user?.role === "admin" ? (
-                <div className='user-list-container' style={{ marginTop: '5%' }}>
-                   
-                    <div className="table-container">
-                        <Table striped className='user-table'>
-                            <thead>
-                                <tr>
-                                    <th>Commande Numero</th>
-                                    <th>Client</th>
-                                    <th>adresse client</th>
-                                    <th>articles </th>
-                                    <th>total a payer</th>
-                                    <th>statut</th>
-                                    <th></th>
-                                    <th></th>
-                                   
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {orders?.toReversed().map((el) => (
-                                    <tr >
-                                        <td>{el?._id}</td>
-                                        <td>{el?.current_user}</td>
-                                        <td>{el?.user_adress}</td>
-                                        <td><OrderItems el={el}/></td>
-                                        <td>{el?.orderTotal + " DT"}</td>
-                                        <td>{el?.orderStatus}</td>
-                                        <td><Button variant="success" onClick={()=>{dispatch(updateorder({id:el?._id})); window.location.reload();}} width={20} height={30} ><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width={'15px'} height={'15'}><path  d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg></Button></td>
-                                        <td><Button variant="danger" onClick={()=>{dispatch(removeorder(el?._id)); window.location.reload();}} width={20} height={20}><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width={'15px'} height={'15px'}><path fill="#ffffff" d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"/></svg></Button>{' '}
-</td>
-                                        </tr>
-                                ))}
-                            </tbody>
-                        </Table>
-                    </div>
-                </div>
-            ) : (
-                <div><center><img src="https://drudesk.com/sites/default/files/2018-02/404-error-page-not-found.jpg" alt="" width={'80%'} height={'auto'} style={{ width: "80%", height: "auto" }} /></center></div>
-            )}
-        </>
-  )
+    <>
+      <header className="bg-white shadow">
+        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+          <h1 className="text-3xl font-bold tracking-tight text-blue-700 text-center">
+            📦 Liste des commandes
+          </h1>
+        </div>
+      </header>
+
+      {isAuth && user?.role === "admin" ? (
+        <div className='container py-6'>
+
+          {/* Filtres de statut */}
+          <div className="mb-5 flex flex-wrap justify-center gap-2">
+            {["all", "en cours de traitement", "acceptée", "refusée"].map((status, idx) => {
+              const btnColor = {
+                all: "secondary",
+                "en cours de traitement": "info",
+                acceptée: "success",
+                refusée: "danger"
+              };
+              return (
+                <Button
+                  key={idx}
+                  variant={filterStatus === status ? btnColor[status] : `outline-${btnColor[status]}`}
+                  onClick={() => handleFilterChange(status)}
+                >
+                  {status === "all" ? "Toutes" : status.charAt(0).toUpperCase() + status.slice(1)}
+                </Button>
+              );
+            })}
+          </div>
+
+          {/* Tableau des commandes */}
+          <div className="overflow-auto">
+            <Table bordered hover responsive className="shadow rounded">
+              <thead className="bg-blue-50 text-center">
+                <tr>
+                  <th>#</th>
+                  <th>Nom Client</th>
+                  <th>Téléphone</th>
+                  <th>Adresse</th>
+                  <th>Articles</th>
+                  <th>Total</th>
+                  <th>Statut</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredOrders?.toReversed().map((el, i) => (
+                  <tr key={el._id} className="align-middle text-center">
+                    <td><span className="font-bold text-blue-800">#{i + 1}</span></td>
+                    <td>{el.user_fullname}</td>
+                    <td>{el.user_gsm}</td>
+                    <td>{el.user_adress}</td>
+                    <td><OrderItems el={el} /></td>
+                    <td className="text-orange-600 font-semibold">{el.orderTotal} DT</td>
+                    <td>
+                      <span className={
+                        el.orderStatus === "acceptée"
+                          ? "badge bg-success"
+                          : el.orderStatus === "refusée"
+                          ? "badge bg-danger"
+                          : "badge bg-warning text-dark"
+                      }>
+                        {el.orderStatus}
+                      </span>
+                    </td>
+                    <td className="d-flex gap-2 justify-center">
+                      <Button
+                        variant="outline-success"
+                        size="sm"
+                        onClick={() => handleUpdateStatus(el._id, "acceptée")}
+                      >
+                        ✅
+                      </Button>
+                      <Button
+                        variant="outline-danger"
+                        size="sm"
+                        onClick={() => handleUpdateStatus(el._id, "refusée")}
+                      >
+                        ❌
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>
+        </div>
+      ) : (
+        <div style={{ textAlign: 'center', padding: '5%' }}>
+          <img
+            src="https://drudesk.com/sites/default/files/2018-02/404-error-page-not-found.jpg"
+            alt="Not found"
+            style={{ width: "80%", height: "auto" }}
+          />
+        </div>
+      )}
+    </>
+  );
 }
 
-export default AdminOrders
+export default AdminOrders;

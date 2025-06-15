@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ChatBot from 'react-simple-chatbot';
 import { ThemeProvider } from 'styled-components';
-import { FaComments } from 'react-icons/fa'; // icône
+import { FaComments } from 'react-icons/fa';
 
 const theme = {
   background: '#f5f8fb',
@@ -16,50 +16,105 @@ const theme = {
 };
 
 const steps = [
-  { id: '0', message: "Bonjour ! Quel est votre prénom ?", trigger: '1' },
-  { id: '1', user: true, trigger: '2' },
-  { id: '2', message: "Enchanté, {previousValue} ! Comment puis-je vous aider ?", trigger: '3' },
   {
-    id: '3',
-   options: [
-  { value: 'admin', label: "Je veux contacter la société", trigger: '4' },
-  { value: 'commande', label: "Comment passer une commande ?", trigger: '5' },
-  { value: 'devis', label: "Comment recevoir un devis ?", trigger: '6' },
-  { value: 'produits', label: "Quels types de produits proposez-vous ?", trigger: '7' },
-  { value: 'personnalisation', label: "Puis-je personnaliser un produit ?", trigger: '8' },
-  { value: 'suivi', label: "Puis-je suivre l'état de ma commande ?", trigger: '9' },
-]
+    id: '0',
+    message: "Bonjour ! Que souhaitez-vous savoir ?",
+    trigger: 'menu',
   },
   {
+    id: 'menu',
+    options: [
+      { value: 'produits', label: "Quels produits proposez-vous ?", trigger: '1' },
+      { value: 'commande', label: "Comment passer une commande ?", trigger: '2' },
+      { value: 'devis', label: "Comment demander un devis ?", trigger: '3' },
+      { value: 'personnalisation', label: "Puis-je personnaliser un produit ?", trigger: '4' },
+      { value: 'suivi', label: "Suivi de commande", trigger: '5' },
+      { value: 'contact', label: "Contacter la société", trigger: '6' },
+    ],
+  },
+  {
+    id: '1',
+    message: "Nous proposons une variété de produits métalliques : portes, tables, chaises, articles décoratfis, etc.",
+    trigger: 'menu',
+  },
+  {
+    id: '2',
+    component: (
+      <div>
+        <p>Choisissez un produit, cliquez sur 'Ajouter au panier' et remplissez le formulaire.</p>
+        <a
+          href="/articles"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 underline"
+        >
+          🛒 Commander maintenant
+        </a>
+      </div>
+    ),
+    trigger: 'menu',
+  },
+  {
+    id: '3',
+    component: (
+      <div>
+        <p>Pour recevoir un devis, allez dans la section Services puis cliquez sur "Demande de devis".</p>
+        <a
+          href="/service"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 underline"
+        >
+          📄 Demander un devis
+        </a>
+      </div>
+    ),
+    trigger: 'menu',
+  },
+ {
   id: '4',
-  message: "Vous pouvez nous contacter via la page Contact ou par téléphone pour toute demande.",
-  end: true
+  component: (
+    <div>
+      <p>Oui, vous pouvez personnaliser les dimensions, couleurs ou matériaux selon vos besoins.</p>
+      <a
+        href="/service"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-blue-600 underline"
+      >
+        ✍️ Envoyer une demande personnalisée
+      </a>
+    </div>
+  ),
+  trigger: 'menu',
 },
-{
+ {
   id: '5',
-  message: "Choisissez un produit, cliquez sur 'Commander' et remplissez le formulaire de commande.",
-  end: true
+  component: (
+    <div>
+      <p>Vous pouvez suivre l'état de votre commande depuis le menu <strong>"Commandes"</strong> dans la barre de navigation.</p>
+      <p>✅ Une notification vous sera également envoyée par email dès que le statut de votre commande change.</p>
+    </div>
+  ),
+  trigger: 'menu',
 },
-{
-  id: '6',
-  message: "Ajoutez les produits à votre commande puis cliquez sur 'Demander un devis'. Vous recevrez une réponse sous 48h.",
-  end: true
-},
-{
-  id: '7',
-  message: "Nous proposons une variété de produits métalliques : portes, tables, chaises, étagères, etc.",
-  end: true
-},
-{
-  id: '8',
-  message: "Oui, vous pouvez personnaliser les dimensions, couleurs ou matériaux selon vos besoins.",
-  end: true
-},
-{
-  id: '9',
-  message: "Oui, un suivi de commande est disponible dans votre espace client après la validation de votre commande.",
-  end: true
-}
+  {
+    id: '6',
+    component: (
+      <div>
+        <p>Vous pouvez nous contacter via la page Contact ou par téléphone.</p>
+        <a
+          href="/contact"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 underline"
+        >
+          📬 Aller à la page Contact
+        </a>
+      </div>
+    ),
+    trigger: 'menu',
+  }
 ];
 
 export default function ChatBott() {
@@ -67,7 +122,6 @@ export default function ChatBott() {
 
   return (
     <>
-      {/* Bouton flottant */}
       <button
         onClick={() => setOpen(!open)}
         className="fixed bottom-6 right-6 z-50 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg"
@@ -76,7 +130,6 @@ export default function ChatBott() {
         <FaComments size={24} />
       </button>
 
-      {/* Fenêtre du chatbot */}
       {open && (
         <div className="fixed bottom-20 right-6 z-50 w-[320px] shadow-xl">
           <ThemeProvider theme={theme}>
