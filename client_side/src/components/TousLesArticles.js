@@ -54,14 +54,14 @@ function TousLesArticles() {
       dispatch(addToCart(article));
       navigate("/panier");
     } else {
-      alert("Vous devez vous connecter !");
+      navigate("/unauthorized");
     }
   };
 
   return (
     <div style={{ backgroundColor: '#fefefe', minHeight: '100vh', padding: '50px 20px' }}>
       <h2 style={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#0033cc', textAlign: 'center', marginBottom: '40px' }}>
-        🎯 Explorer nos articles
+        🎯 Explorer nos produits
       </h2>
 
       {/* Barre de recherche */}
@@ -134,7 +134,7 @@ function TousLesArticles() {
               <p style={{ fontWeight: 'bold', color: '#ff7f00', fontSize: '0.95rem' }}>{article.prix} DT</p>
 
               <div style={btnGroupStyle}>
-                {(!isAuth || user?.role === "user") && (
+                {(isAuth && user?.role === "user") && (
                   <button style={btnCartStyle} onClick={() => handleAddToCart(article)}>
                     🛒 Ajouter au panier
                   </button>

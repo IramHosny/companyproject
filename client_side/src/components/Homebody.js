@@ -63,13 +63,31 @@ function Homebody() {
       </Fade>
 
       {/* Marquee texte défilant */}
-      <div style={{ marginBottom: '30px' }}>
-        <marquee scrollAmount="20" behavior="scroll" direction="left">
-          <p style={{ color: '#0033cc', fontWeight: 'bold', fontSize: '1.1rem' }}>
-            Chez ABDEDAIEM ARTS MÉTALLIQUES MODERNES, vos produits métalliques disponibles sans vous déplacer.
-          </p>
-        </marquee>
-      </div>
+    <div style={{ 
+  marginBottom: '30px', 
+  overflow: 'hidden', 
+  whiteSpace: 'nowrap', 
+  position: 'relative' 
+}}>
+  <div style={{
+    display: 'inline-block',
+    paddingLeft: '100%',
+    fontWeight: 'bold',
+    fontSize: '1.1rem',
+    color: '#0033cc',
+    animation: 'slide-left 10s linear infinite'
+  }}>
+    Chez ABDEDAIEM ARTS MÉTALLIQUES MODERNES, vos produits métalliques disponibles sans vous déplacer.
+  </div>
+  <style>
+    {`
+      @keyframes slide-left {
+        0%   { transform: translateX(0%); }
+        100% { transform: translateX(-100%); }
+      }
+    `}
+  </style>
+</div>
 
       {/* Cartes services animées */}
       <div style={{

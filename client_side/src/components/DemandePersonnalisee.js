@@ -40,6 +40,17 @@ function DemandePersonnalisee() {
     try {
       await dispatch(addDemandePerso(formData));
       setMessage("✅ Demande bien reçue ! Nous vous répondrons dans les plus brefs délais après examen.");
+
+      // ✅ Réinitialiser les champs après envoi
+      setForm({
+        piece: "",
+        couleur: "",
+        dimensions: "",
+        quantite: 1,
+        dateLimite: "",
+      });
+      setImage(null);
+
       setTimeout(() => setMessage(""), 5000);
     } catch (err) {
       setMessage("❌ Une erreur est survenue lors de l'envoi de la demande.");
@@ -56,7 +67,9 @@ function DemandePersonnalisee() {
       <AnimatePresence>
         {message && (
           <motion.div
-            className={`mb-4 px-4 py-3 rounded text-white ${message.startsWith("✅") ? "bg-green-600" : "bg-red-600"}`}
+            className={`mb-4 px-4 py-3 rounded text-white ${
+              message.startsWith("✅") ? "bg-green-600" : "bg-red-600"
+            }`}
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
@@ -75,6 +88,7 @@ function DemandePersonnalisee() {
             required
             placeholder="Ex : Portail, étagère, etc."
             className="w-full p-3 mt-1 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            value={form.piece}
             onChange={handleChange}
           />
         </div>
@@ -86,6 +100,7 @@ function DemandePersonnalisee() {
             name="couleur"
             placeholder="Ex : gris métal, noir mat..."
             className="w-full p-3 mt-1 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+            value={form.couleur}
             onChange={handleChange}
           />
         </div>
@@ -97,6 +112,7 @@ function DemandePersonnalisee() {
             name="dimensions"
             placeholder="Ex : 120x60x40 cm"
             className="w-full p-3 mt-1 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            value={form.dimensions}
             onChange={handleChange}
           />
         </div>
@@ -110,6 +126,7 @@ function DemandePersonnalisee() {
             required
             placeholder="Nombre d’unités"
             className="w-full p-3 mt-1 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+            value={form.quantite}
             onChange={handleChange}
           />
         </div>
@@ -121,6 +138,7 @@ function DemandePersonnalisee() {
             name="dateLimite"
             required
             className="w-full p-3 mt-1 border rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            value={form.dateLimite}
             onChange={handleChange}
           />
         </div>
@@ -146,8 +164,12 @@ function DemandePersonnalisee() {
       </form>
 
       <div className="mt-12 bg-white p-4 rounded-xl shadow-inner border text-center">
-        <h4 className="text-lg font-bold text-blue-600 mb-2">💡 Articles similaires ou inspirants :</h4>
-        <p className="text-sm text-gray-700">Pensez à consulter notre catalogue pour découvrir les réalisations proches de votre besoin.</p>
+        <h4 className="text-lg font-bold text-blue-600 mb-2">
+          💡 Articles similaires ou inspirants :
+        </h4>
+        <p className="text-sm text-gray-700">
+          Pensez à consulter notre catalogue pour découvrir les réalisations proches de votre besoin.
+        </p>
       </div>
     </div>
   );

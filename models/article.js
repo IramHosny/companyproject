@@ -5,7 +5,7 @@ const articleSchema = new schema({
   name: { type: String, required: true },
   categorie: { type: String, required: true },
   description: { type: String, required: true },
-  prix: { type: String, required: true },
+  prix: { type: String, required: false },
 
   reference: {
     type: String,

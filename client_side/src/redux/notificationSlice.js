@@ -14,6 +14,19 @@ export const getNotifications = createAsyncThunk(
     }
   }
 );
+export const deleteNotification = createAsyncThunk(
+  "notifications/delete",
+  async (id, { rejectWithValue }) => {
+    try {
+      await axios.delete(`http://localhost:5000/notifications/${id}`);
+      return id; // on retourne l'id supprimé pour le retirer de la liste
+    } catch (error) {
+      console.error("Erreur suppression notification :", error.response?.data || error.message);
+      return rejectWithValue(error.response?.data || "Erreur suppression");
+    }
+  }
+);
+
 
 const notificationSlice = createSlice({
   name: "notification", 
@@ -36,7 +49,11 @@ const notificationSlice = createSlice({
       .addCase(getNotifications.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Erreur inconnue";
-      });
+      })
+      .addCase(deleteNotification.fulfilled, (state, action) => {
+  state.list = state.list.filter((notif) => notif._id !== action.payload);
+});
+      
   },
 });
 

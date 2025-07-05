@@ -16,12 +16,21 @@ function PublicPromotions() {
     dispatch(getPromotions());
   }, [dispatch]);
 
-  const filteredPromos = promotions.filter((promo) => promo.pourcentage >= minPourcentage);
+ const filteredPromos = [...promotions]
+  .filter((promo) => promo.pourcentage >= minPourcentage)
+  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // 🔁 plus récent d'abord
+
 
   return (
     <div style={{ padding: '60px 20px', backgroundColor: '#fffaf5' }}>
       <Zoom triggerOnce>
-        <h2 style={{ textAlign: 'center', fontSize: '2.5rem', fontWeight: 'bold', color: '#0033cc', marginBottom: '40px' }}>
+        <h2 style={{
+          textAlign: 'center',
+          fontSize: '2.5rem',
+          fontWeight: 'bold',
+          color: '#0033cc',
+          marginBottom: '40px'
+        }}>
           Promotions en cours
         </h2>
       </Zoom>
@@ -57,24 +66,32 @@ function PublicPromotions() {
         {filteredPromos.map((promo) => (
           <SwiperSlide key={promo._id}>
             <Zoom triggerOnce>
-              <div style={{
-                background: 'linear-gradient(135deg, #fff0e6, #ffffff)',
-                border: '1px solid #ffe3d3',
-                borderRadius: '20px',
-                padding: '30px',
-                height: '100%',
-                boxShadow: '0 10px 20px rgba(0,0,0,0.1)',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                transform: 'scale(1)',
-                transition: 'transform 0.4s ease-in-out'
-              }}
+              <div
+                style={{
+                  background: 'linear-gradient(135deg, #fff0e6, #ffffff)',
+                  border: '1px solid #ffe3d3',
+                  borderRadius: '20px',
+                  padding: '30px',
+                  height: '100%',
+                  boxShadow: '0 10px 20px rgba(0,0,0,0.1)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  transform: 'scale(1)',
+                  transition: 'transform 0.4s ease-in-out'
+                }}
                 onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
                 onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
               >
-                <h3 style={{ color: '#ff7f00', fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '12px' }}>{promo.title}</h3>
+                <h3 style={{
+                  color: '#ff7f00',
+                  fontSize: '1.5rem',
+                  fontWeight: 'bold',
+                  marginBottom: '12px'
+                }}>{promo.title}</h3>
+
                 <p style={{ color: '#444', fontSize: '1rem', flexGrow: 1 }}>{promo.description}</p>
+
                 <span style={{
                   marginTop: '18px',
                   backgroundColor: '#e6f9e6',
@@ -87,6 +104,33 @@ function PublicPromotions() {
                 }}>
                   -{promo.pourcentage}% OFF
                 </span>
+
+                {/* ✅ Lien animé avec icône 🔥 */}
+                {promo.articleId && (
+                  <a
+                    href={`/article/${promo.articleId._id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      marginTop: '16px',
+                      color: '#ff4500',
+                      fontWeight: 'bold',
+                      textDecoration: 'none',
+                      fontSize: '0.95rem',
+                      alignSelf: 'flex-start',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      transition: 'transform 0.3s ease'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.08)'}
+                    onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                  >
+
+
+                   🔥 Voir le produit
+                  </a>
+                )}
               </div>
             </Zoom>
           </SwiperSlide>

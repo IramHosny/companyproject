@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addDevis } from "../redux/devisSlice";
 import { getarticle } from "../redux/articleSlice";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function DemandeDevis() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
+  const user = useSelector((state) => state.user?.user);
   const articlelist = useSelector((state) => state.article.articlelist || []);
 
   const [form, setForm] = useState({
@@ -20,11 +22,29 @@ function DemandeDevis() {
     dateLivraisonSouhaitee: "",
   });
 
-  const [articles, setArticles] = useState([{ reference: "", quantite: 1 }]);
+  const [articles, setArticles] = useState([
+    { reference: "", quantite: 1, description: "" }
+  ]);
 
   useEffect(() => {
     dispatch(getarticle());
-  }, [dispatch]);
+
+    const preselected = location.state?.preselectedArticles;
+    if (preselected && Array.isArray(preselected)) {
+      setArticles(preselected);
+    }
+
+    if (user) {
+      setForm((prev) => ({
+        ...prev,
+        nom: user.name || "",
+        prenom: user.lastname || "",
+        societe: "",
+        email: user.email || "",
+        telephone: user.phonenumber || "",
+      }));
+    }
+  }, [dispatch, location.state, user]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -37,7 +57,7 @@ function DemandeDevis() {
   };
 
   const addArticle = () => {
-    setArticles([...articles, { reference: "", quantite: 1 }]);
+    setArticles([...articles, { reference: "", quantite: 1, description: "" }]);
   };
 
   const removeArticle = (index) => {
@@ -64,26 +84,15 @@ function DemandeDevis() {
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Infos utilisateur */}
         <div className="grid md:grid-cols-2 gap-4">
           <div>
             <label className="font-bold text-blue-700">Nom :</label>
-            <input
-              name="nom"
-              required
-              placeholder="Votre nom"
-              className="input"
-              onChange={handleChange}
-            />
+            <input name="nom" value={form.nom} readOnly className="input bg-gray-100" />
           </div>
           <div>
             <label className="font-bold text-blue-700">Prénom :</label>
-            <input
-              name="prenom"
-              required
-              placeholder="Votre prénom"
-              className="input"
-              onChange={handleChange}
-            />
+            <input name="prenom" value={form.prenom} readOnly className="input bg-gray-100" />
           </div>
         </div>
 
@@ -91,8 +100,9 @@ function DemandeDevis() {
           <label className="font-bold text-blue-700">Société :</label>
           <input
             name="societe"
-            placeholder="Nom de votre entreprise"
+            placeholder="Tapez le nom de votre société"
             className="input"
+            value={form.societe}
             onChange={handleChange}
           />
         </div>
@@ -100,30 +110,18 @@ function DemandeDevis() {
         <div className="grid md:grid-cols-2 gap-4">
           <div>
             <label className="font-bold text-blue-700">Email :</label>
-            <input
-              name="email"
-              required
-              type="email"
-              placeholder="ex: nom@exemple.com"
-              className="input"
-              onChange={handleChange}
-            />
+            <input name="email" type="email" value={form.email} readOnly className="input bg-gray-100" />
           </div>
           <div>
             <label className="font-bold text-blue-700">Téléphone :</label>
-            <input
-              name="telephone"
-              required
-              placeholder="Numéro de téléphone"
-              className="input"
-              onChange={handleChange}
-            />
+            <input name="telephone" value={form.telephone} readOnly className="input bg-gray-100" />
           </div>
         </div>
 
+        {/* Articles demandés */}
         <fieldset className="border border-blue-200 p-4 rounded-md bg-white shadow-sm">
           <legend className="text-lg font-semibold text-blue-700 px-2">
-            📦 Articles demandés
+            📦 Produits demandés
           </legend>
 
           {articles.map((article, index) => (
@@ -136,12 +134,14 @@ function DemandeDevis() {
                   handleArticleChange(index, "reference", e.target.value)
                 }
               >
-                <option value="">-- Choisir un article --</option>
-                {articlelist.map((a) => (
-                  <option key={a._id} value={a.reference}>
-                    {a.name} ({a.reference})
-                  </option>
-                ))}
+                <option value="">-- Choisir un produit --</option>
+                {articlelist
+                  .filter((a) => a.categorie === "produit_industriel")
+                  .map((a) => (
+                    <option key={a._id} value={a.reference}>
+                      {a.name} ({a.reference})
+                    </option>
+                  ))}
               </select>
 
               <div className="flex items-center gap-2">
@@ -166,6 +166,16 @@ function DemandeDevis() {
                   </button>
                 )}
               </div>
+
+              <input
+                type="text"
+                placeholder="Description du produit"
+                className="input mt-2"
+                value={article.description}
+                onChange={(e) =>
+                  handleArticleChange(index, "description", e.target.value)
+                }
+              />
             </div>
           ))}
 
@@ -175,7 +185,7 @@ function DemandeDevis() {
               onClick={addArticle}
               className="text-orange-600 font-semibold hover:underline"
             >
-              ➕ Ajouter un article
+              ➕ Ajouter un produit
             </button>
           </div>
         </fieldset>
@@ -202,8 +212,6 @@ function DemandeDevis() {
           </button>
         </div>
       </form>
-
-      
     </div>
   );
 }

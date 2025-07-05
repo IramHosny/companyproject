@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { deleteDevis } from "../redux/devisSlice"; // 🧠 Assure-toi d'avoir importé
+import { useDispatch, useSelector } from "react-redux";
+import { deleteDevis } from "../redux/devisSlice";
 import axios from "axios";
 import { motion } from "framer-motion";
-import { Trash2 } from "lucide-react"; // 📦 icône poubelle (optionnel)
+import { Trash2 } from "lucide-react";
+import MiniDetailArticle from './MiniDetailArticle';
 
 function AdminDevis() {
   const [devisList, setDevisList] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState({});
+  const [selectedArticle, setSelectedArticle] = useState(null); // ✅ pour la popup
   const dispatch = useDispatch();
+
+  const articles = useSelector((state) => state.article?.articlelist || []); // ✅ liste d’articles
 
   const fetchDevis = async () => {
     try {
@@ -93,13 +97,24 @@ function AdminDevis() {
               </div>
 
               <div className="mb-4">
-                <h4 className="font-semibold text-blue-700 mb-1">🧾 Articles :</h4>
+                <h4 className="font-semibold text-blue-700 mb-1">🧾 Produits :</h4>
                 <ul className="text-sm list-disc list-inside text-gray-700">
-                  {devis.articles?.map((a, i) => (
-                    <li key={i}>
-                      <strong>Réf :</strong> {a.reference} — <strong>Qté :</strong> {a.quantite}
-                    </li>
-                  ))}
+                  {devis.articles?.map((a, i) => {
+                    const matchedArticle = articles.find(art => art.reference === a.reference);
+
+                    return (
+                      <li
+                        key={i}
+                        onClick={() => matchedArticle && setSelectedArticle(matchedArticle)}
+                        className={`cursor-pointer hover:text-blue-700 transition ${
+                          matchedArticle ? '' : 'opacity-50 cursor-not-allowed'
+                        }`}
+                        title={matchedArticle ? 'Voir les détails de l’article' : 'Article introuvable'}
+                      >
+                        <strong>Réf :</strong> {a.reference} — <strong>Qté :</strong> {a.quantite}
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
 
@@ -134,6 +149,14 @@ function AdminDevis() {
             </motion.div>
           ))}
         </div>
+      )}
+
+      {/* ✅ Popup article (affichée si cliqué) */}
+      {selectedArticle && (
+        <MiniDetailArticle
+          article={selectedArticle}
+          onClose={() => setSelectedArticle(null)}
+        />
       )}
     </div>
   );

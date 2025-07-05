@@ -12,12 +12,13 @@ const devisSchema = new mongoose.Schema({
   email: { type: String, required: true },
   telephone: String,
 
-  articles: [
-    {
-      reference: { type: String, required: true },
-      quantite: { type: Number, required: true },
-    }
-  ],
+ articles: [
+  {
+    reference: { type: String, required: true },
+    quantite: { type: Number, required: true },
+    description: { type: String }, // ✅ Ajout
+  }
+],
 
   dateLivraisonSouhaitee: Date,
 

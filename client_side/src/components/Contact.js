@@ -4,49 +4,53 @@ import { useRef, useState } from 'react'
 import Swal from 'sweetalert2';
 import emailjs from '@emailjs/browser';
 
-export default function Example() {
-  const [agreed, setAgreed] = useState(false)
+export default function ContactForm() {
+  const [agreed, setAgreed] = useState(false);
   const form = useRef();
 
   const sendEmail = (e) => {
     e.preventDefault();
 
     emailjs
-      .sendForm('service_75u9cmp', 'template_d67uqel', form.current, {
-        publicKey: '7InAQW5TO_m6eP9bJ',
+      .sendForm('service_fr92wbh', 'template_656gdhm', form.current, {
+        publicKey: '2-uhqHnU3USDdDsvA',
       })
       .then(
         () => {
-          console.log('SUCCESS!');
           Swal.fire({
             position: "top-end",
             icon: "success",
-            title: "Votre email a été bien envoyé",
+            title: "Votre message a été envoyé avec succès. Nous le traiterons dans les plus brefs délais.",
             showConfirmButton: false,
+            timer: 3000
           });
           setTimeout(() => {
             window.location.reload();
           }, 3000);
         },
         (error) => {
+          Swal.fire({
+            icon: "error",
+            title: "Une erreur s’est produite.",
+            text: "Veuillez réessayer plus tard.",
+          });
           console.log('FAILED...', error.text);
-        },
+        }
       );
   };
 
-
   return (
-
     <div className="mx-auto mt-16 max-w-6xl sm:mt-20 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-  <div className="hidden md:block">
-    <img
-      src="https://images.unsplash.com/photo-1598302936625-6075fbd98dd7?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-      alt="sociét"
-      className="rounded-lg shadow-lg shadow-[#0078A6]"
-    />
-  </div>
+      {/* Image à gauche */}
+      <div className="hidden md:block">
+        <img
+          src="https://images.unsplash.com/photo-1598302936625-6075fbd98dd7?q=80&w=1470&auto=format&fit=crop"
+          alt="société"
+          className="rounded-lg shadow-lg shadow-[#0078A6]"
+        />
+      </div>
 
-  {/* FORMULAIRE DE CONTACT */}
+      {/* FORMULAIRE DE CONTACT */}
   <form ref={form} onSubmit={sendEmail} className="bg-white/60 backdrop-blur-md p-6 rounded-xl shadow-lg shadow-[#0078A6]">
     <div className="grid grid-cols-1 gap-x-6 gap-y-6">
       <div>
@@ -91,15 +95,13 @@ export default function Example() {
       <div>
         <button
           type="submit"
-           className="w-full rounded-md px-4 py-2.5 text-sm font-semibold text-white hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-blue-400"
-  style={{ backgroundColor: 'rgb(0, 44, 253)' }}
-       >
+          className="w-full rounded-md bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        >
           ✉️ Envoyer
         </button>
       </div>
     </div>
   </form>
-</div>
-
-  )
+    </div>
+  );
 }

@@ -1,43 +1,63 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { addPromotion } from '../redux/promotionSlice';
+import { getarticle } from '../redux/articleSlice';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 function AddPromotion() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const articles = useSelector((state) => state.article.articlelist || []);
 
   const [form, setForm] = useState({
     title: '',
     description: '',
     pourcentage: '',
+    articleId: '', // facultatif
   });
+
+  useEffect(() => {
+    dispatch(getarticle());
+  }, [dispatch]);
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.title || !form.description || !form.pourcentage) {
-      alert("Veuillez remplir tous les champs !");
+    const { title, description, pourcentage } = form;
+    if (!title || !description || !pourcentage) {
+      Swal.fire('Erreur', 'Veuillez remplir tous les champs obligatoires.', 'error');
       return;
     }
 
-    dispatch(addPromotion(form));
-    setForm({ title: '', description: '', pourcentage: '' }); // Réinitialisation
-    navigate('/admin/promotions'); // ou juste setShowForm(false) si tu veux rester ici
+    // Nettoyer l'objet avant envoi
+    const dataToSend = { ...form };
+    if (!dataToSend.articleId) {
+      delete dataToSend.articleId;
+    }
+
+    try {
+      await dispatch(addPromotion(dataToSend));
+      Swal.fire('Succès', 'Promotion ajoutée avec succès.', 'success');
+      setForm({ title: '', description: '', pourcentage: '', articleId: '' });
+      navigate('/admin/promotions');
+    } catch (error) {
+      Swal.fire('Erreur', 'Une erreur est survenue.', 'error');
+    }
   };
 
   return (
-    <div className="p-4 max-w-md mx-auto bg-white shadow rounded">
-      <h2 className="text-xl font-bold mb-4 text-blue-700">Ajouter une Promotion</h2>
-      <form onSubmit={handleSubmit} className="space-y-3">
+    <div className="p-4 max-w-lg mx-auto bg-white shadow-md rounded-md">
+      <h2 className="text-2xl font-semibold mb-4 text-blue-700">🎉 Ajouter une Promotion</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
         <input
           name="title"
           value={form.title}
           onChange={handleChange}
-          placeholder="Titre"
+          placeholder="Titre de la promotion"
           className="w-full p-2 border rounded"
           required
         />
@@ -60,11 +80,26 @@ function AddPromotion() {
           max="100"
           required
         />
+
+        <select
+          name="articleId"
+          value={form.articleId}
+          onChange={handleChange}
+          className="w-full p-2 border rounded"
+        >
+          <option value="">🔗 Aucun article associé (optionnel)</option>
+          {articles.map((art) => (
+            <option key={art._id} value={art._id}>
+              {art.name || art.nom}
+            </option>
+          ))}
+        </select>
+
         <button
           type="submit"
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
         >
-          Ajouter
+          ➕ Ajouter la Promotion
         </button>
       </form>
     </div>

@@ -13,7 +13,7 @@ function ArticleListAdmin({ ping, setping }) {
 
   const handleDelete = (id) => {
     Swal.fire({
-      title: "Voulez-vous supprimer cet article ?",
+      title: "Voulez-vous supprimer ce produit ?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "Oui, supprimer",
@@ -21,7 +21,7 @@ function ArticleListAdmin({ ping, setping }) {
     }).then((result) => {
       if (result.isConfirmed) {
         dispatch(deletearticle(id)).then(() => setping(!ping));
-        Swal.fire("Supprimé", "L'article a été supprimé.", "success");
+        Swal.fire("Supprimé", "Le produit a été supprimé.", "success");
       }
     });
   };
@@ -31,7 +31,7 @@ function ArticleListAdmin({ ping, setping }) {
       {isAuth && user?.role === "admin" ? (
         <div className="p-6 bg-gradient-to-br from-blue-50 to-orange-50 min-h-screen">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-blue-700">📦 Liste des Articles</h2>
+            <h2 className="text-2xl font-bold text-blue-700">📦 Liste des produits </h2>
             <AddArticle ping={ping} setping={setping} />
           </div>
 

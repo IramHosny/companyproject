@@ -4,8 +4,13 @@ import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Homebody from './Homebody';
 import ChattBott from './ChattBott';
+import { useNavigate } from 'react-router-dom';
 
 function Home() {
+    const navigate = useNavigate();
+   const handleClick = () => {
+    navigate('/articles');
+  };
   return (
     <>
       <div style={{
@@ -86,22 +91,24 @@ function Home() {
               Commandez vos produits en ligne, sans vous déplacer : cabines, abris, portes, tables, articles décoratifs et plus encore.
             </h6>
 
-            <button style={{
-              marginTop: '25px',
-              backgroundColor: '#ff7f00',
-              color: 'white',
-              padding: '12px 24px',
-              fontSize: '1rem',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              transition: 'background 0.3s ease'
-            }}
-              onMouseOver={(e) => e.target.style.backgroundColor = '#e66e00'}
-              onMouseOut={(e) => e.target.style.backgroundColor = '#ff7f00'}
-            >
-              Voir nos produits
-            </button>
+              <button
+      style={{
+        marginTop: '25px',
+        backgroundColor: '#ff7f00',
+        color: 'white',
+        padding: '12px 24px',
+        fontSize: '1rem',
+        border: 'none',
+        borderRadius: '8px',
+        cursor: 'pointer',
+        transition: 'background 0.3s ease'
+      }}
+      onClick={handleClick}
+      onMouseOver={(e) => e.target.style.backgroundColor = '#e66e00'}
+      onMouseOut={(e) => e.target.style.backgroundColor = '#ff7f00'}
+    >
+      Voir nos produits
+    </button>
           </Bounce>
         </div>
 

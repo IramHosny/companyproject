@@ -5,6 +5,8 @@ import Form from 'react-bootstrap/Form';
 import { useDispatch } from 'react-redux';
 import { addarticle } from '../redux/articleSlice';
 
+// ...imports comme avant
+
 function AddArticle({ ping, setping }) {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -57,36 +59,26 @@ function AddArticle({ ping, setping }) {
     handleClose();
   };
 
+  const isProduitIndustriel = article.categorie === "produit_industriel";
+
   return (
     <div>
-      <Button
-        onClick={handleShow}
-        className="text-white px-4 py-2 rounded-md font-semibold"
+      <Button onClick={handleShow} className="text-white px-4 py-2 rounded-md font-semibold"
         style={{
           backgroundColor: '#f15d00',
           border: 'none',
           boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
-        }}
-      >
-        🧩 Ajouter un article
+        }}>
+        🧩 Ajouter un produit
       </Button>
 
       <Modal show={show} onHide={handleClose} size="lg" centered>
         <Modal.Header closeButton className="bg-blue-600 text-white">
-          <Modal.Title>📝 Ajouter un nouvel article</Modal.Title>
+          <Modal.Title>📝 Ajouter un nouveau produit </Modal.Title>
         </Modal.Header>
         <Modal.Body className="bg-gray-50">
           <Form>
-            <Form.Group className="mb-3">
-              <Form.Label>Nom de l'article</Form.Label>
-              <Form.Control
-                type="text"
-                name="name"
-                placeholder="Nom de l'article"
-                onChange={handleInputChange}
-              />
-            </Form.Group>
-
+            {/* Catégorie */}
             <Form.Group className="mb-3">
               <Form.Label>Catégorie</Form.Label>
               <Form.Select name="categorie" onChange={handleInputChange}>
@@ -95,48 +87,96 @@ function AddArticle({ ping, setping }) {
                 <option value="articles_décoratifs">Articles décoratifs</option>
                 <option value="cabine">Cabine</option>
                 <option value="tables et chaises">Tables et chaises</option>
+                <option value="produit_industriel">Produit industriel</option>
               </Form.Select>
             </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Description</Form.Label>
-              <Form.Control
-                type="text"
-                name="description"
-                placeholder="Courte description"
-                onChange={handleInputChange}
-              />
-            </Form.Group>
+            {/* Champs dynamiques */}
+            {isProduitIndustriel ? (
+              <>
+                <Form.Group className="mb-3">
+                  <Form.Label>Titre</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="name"
+                    placeholder="Titre du produit industriel"
+                    onChange={handleInputChange}
+                  />
+                </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Prix</Form.Label>
-              <Form.Control
-                type="number"
-                name="prix"
-                placeholder="En DT"
-                onChange={handleInputChange}
-              />
-            </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Description</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="description"
+                    placeholder="Description"
+                    onChange={handleInputChange}
+                  />
+                </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Images normales (max 4)</Form.Label>
-              <Form.Control
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleImageChange}
-              />
-            </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Image principale</Form.Label>
+                  <Form.Control
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleImageChange}
+                  />
+                </Form.Group>
+              </>
+            ) : (
+              <>
+                <Form.Group className="mb-3">
+                  <Form.Label>Nom du produit </Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="name"
+                    placeholder="Nom du produit"
+                    onChange={handleInputChange}
+                  />
+                </Form.Group>
 
-            <Form.Group className="mb-3">
-              <Form.Label>Images 360° (max 36)</Form.Label>
-              <Form.Control
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleImage360Change}
-              />
-            </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Description</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="description"
+                    placeholder="Courte description"
+                    onChange={handleInputChange}
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                  <Form.Label>Prix</Form.Label>
+                  <Form.Control
+                    type="number"
+                    name="prix"
+                    placeholder="En DT"
+                    onChange={handleInputChange}
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                  <Form.Label>Images normales (max 4)</Form.Label>
+                  <Form.Control
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleImageChange}
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                  <Form.Label>Images 360° (max 36)</Form.Label>
+                  <Form.Control
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleImage360Change}
+                  />
+                </Form.Group>
+              </>
+            )}
           </Form>
         </Modal.Body>
         <Modal.Footer className="bg-blue-50">
@@ -160,3 +200,4 @@ function AddArticle({ ping, setping }) {
 }
 
 export default AddArticle;
+

@@ -13,7 +13,7 @@ function Panier() {
     const isAuth = localStorage.getItem("token");
     const cart = useSelector((state) => state.cart);
 
-    const fraisLivraison = 4;
+
 
     const handleRemoveItem = (cartItem) => {
         dispatch(removeFromCart(cartItem));
@@ -65,7 +65,7 @@ function Panier() {
                                 <table className="table-auto w-full border">
                                     <thead>
                                         <tr className="bg-blue-100 text-blue-800 font-semibold">
-                                            <th className="p-2">📦 Article</th>
+                                            <th className="p-2">📦 Produit</th>
                                             <th className="p-2">💰 Prix</th>
                                             <th className="p-2">🔢 Quantité</th>
                                             <th className="p-2">🧾 Total</th>

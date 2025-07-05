@@ -61,7 +61,7 @@ function EditArticle({ ping, setping, article }) {
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Modifier l'article</Modal.Title>
+          <Modal.Title>Modifier le produit </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>

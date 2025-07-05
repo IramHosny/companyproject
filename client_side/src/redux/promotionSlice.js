@@ -7,6 +7,7 @@ export const getPromotions = createAsyncThunk('promotion/getAll', async () => {
   return res.data.promotions;
 });
 
+
 // ✅ Ajouter une promotion
 export const addPromotion = createAsyncThunk('promotion/add', async (newPromo) => {
   const res = await axios.post('http://localhost:5000/promotion/add', newPromo);

@@ -44,14 +44,16 @@ function Navbarr() {
               Qui sommes nous
             </Nav.Link>
 
-           <NavDropdown title="Nos produits" id="collapsible-nav-dropdown" style={{ fontWeight: 'bold' }}>
+          <NavDropdown title="Nos produits" id="collapsible-nav-dropdown" style={{ fontWeight: 'bold' }}>
   <NavDropdown.Item as={Link} to="/portes/articles">Portes</NavDropdown.Item>
   <NavDropdown.Item as={Link} to="/articles_décoratifs/articles">Articles décoratifs</NavDropdown.Item>
   <NavDropdown.Item as={Link} to="/cabine/articles">Cabines</NavDropdown.Item>
   <NavDropdown.Item as={Link} to="/tables et chaises/articles">Tables & chaises</NavDropdown.Item>
   <NavDropdown.Item as={Link} to="/categorie">Catalogue de produits</NavDropdown.Item>
-   <NavDropdown.Item as={Link} to="/articles">Tous nos produits</NavDropdown.Item>
+  <NavDropdown.Item as={Link} to="/articles">Tous nos produits</NavDropdown.Item>
+   <NavDropdown.Item as={Link} to="/produit_industriel/articles">Produits industriels</NavDropdown.Item>
 </NavDropdown>
+
 
 <Nav.Link as={Link} to="/promotions" style={{ fontWeight: 'bold' }}>
   Promotions

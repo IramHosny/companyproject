@@ -17,11 +17,11 @@ router.post("/add", async (req, res) => {
 // ✅ Obtenir toutes les promotions
 router.get("/all", async (req, res) => {
   try {
-    const promos = await Promotion.find().sort({ createdAt: -1 });
-    res.send({ promotions: promos });
+    const promotions = await Promotion.find().populate("articleId"); // 👈 important
+    res.status(200).send({ msg: "Liste des promotions", promotions });
   } catch (error) {
     console.error(error);
-    res.status(500).send({ msg: "Erreur lors de la récupération ❌" });
+    res.status(500).send({ msg: "Erreur serveur" });
   }
 });
 

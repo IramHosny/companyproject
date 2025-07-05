@@ -20,7 +20,7 @@ export default function Dashboard() {
       icon: "📦"
     },
     {
-      title: "Gestion des articles",
+      title: "Gestion des produits",
       description: "Ajouter, modifier et supprimer des articles.",
       path: "/artiadmin",
       icon: "🛠️"

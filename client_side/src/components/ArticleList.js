@@ -4,10 +4,9 @@ import ArticleCard from './ArticleCard';
 import { useParams } from 'react-router-dom';
 
 function ArticleList({ ping, setping }) {
-  const { cat } = useParams(); // catégorie depuis l'URL
+  const { cat } = useParams();
   const articles = useSelector((state) => state.article?.articlelist || []);
 
-  // 🔎 Normalisation de la catégorie (insensible à la casse)
   const filteredArticles = cat && cat !== "all"
     ? articles.filter(
         (el) =>
@@ -19,11 +18,18 @@ function ArticleList({ ping, setping }) {
     <div>
       {filteredArticles.length > 0 ? (
         <div
-          className="article_list"
-          style={{ display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap' }}
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+            gap: '20px',
+            alignItems: 'stretch',
+            padding: '20px',
+          }}
         >
           {filteredArticles.map((el) => (
-            <ArticleCard key={el._id} article={el} />
+            <div key={el._id} style={{ height: '100%' }}>
+              <ArticleCard article={el} />
+            </div>
           ))}
         </div>
       ) : (

@@ -5,16 +5,18 @@ import AddPromotion from './AddPromotion';
 import EditPromotions from './EditPromotions';
 import Swal from 'sweetalert2';
 import { motion } from 'framer-motion';
+import ArticleCard from './ArticleCard'; // 👈 Utilisation directe
 
 function AdminPromotions() {
   const dispatch = useDispatch();
+
   const promotions = useSelector((state) => state.promotion.promotions || []);
   const [showForm, setShowForm] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [promoToEdit, setPromoToEdit] = useState(null);
 
   useEffect(() => {
-    dispatch(getPromotions());
+    dispatch(getPromotions()); // ✅ Charge les promotions avec article lié
   }, [dispatch]);
 
   const handleDelete = (id) => {
@@ -75,6 +77,15 @@ function AdminPromotions() {
             <div className="mt-3 text-orange-600 font-bold text-sm">
               🔥 -{promo.pourcentage}%
             </div>
+
+            {/* ✅ Affichage direct si l'article est lié via populate */}
+            {promo.articleId && (
+              <div className="mt-4">
+                <h4 className="text-sm font-semibold text-gray-600 mb-1">🧩 Produit associé :</h4>
+                <ArticleCard article={promo.articleId} />
+              </div>
+            )}
+
             <div className="mt-4 flex justify-end gap-3 text-sm">
               <button
                 onClick={() => handleEdit(promo)}

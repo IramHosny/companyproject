@@ -5,8 +5,9 @@ import { Link } from 'react-router-dom';
 const categories = [
   { name: 'portes', label: 'Portes', image: '/images/cat_portes.jpg' },
   { name: 'articles_décoratifs', label: 'Articles décoratifs', image: '/images/cat_decor.jpg' },
-  { name: 'cabine', label: 'Cabines', image: '/images/cat_cabines.jpg' },
-  { name: 'tables et chaises', label: 'Tables & Chaises', image: '/images/cat_tables.jpg' }
+  { name: 'cabine', label: 'Cabines', image: '/images/cabin.jpg' },
+  { name: 'tables et chaises', label: 'Tables & Chaises', image: '/images/cat_tables.jpg' },
+  { name: 'produit_industriel', label: 'produit industriel', image: '/images/cat_cabines.jpg' }
 ];
 
 function CategorieSection() {

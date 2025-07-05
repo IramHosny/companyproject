@@ -62,7 +62,7 @@ function Footer() {
                   </div>
                   <ul>
                     <li><Link to="/"><a href="#">Accueil</a></Link></li>
-                    <li><Link to="service1"><a href="#">Nos produits</a></Link></li>
+                    <li><Link to="/articles"><a href="#">Nos produits</a></Link></li>
                     <li><Link to="about"><a href="#">A propos de nous</a></Link></li>    
                     <li><Link to="contact"><a href="#">Contact</a></Link></li>     
                     

@@ -29,20 +29,23 @@ function AdminDemandesPerso() {
     const statut = selectedStatuts[id];
     if (statut) {
       dispatch(updateStatutDemande({ id, statut }))
-  .then(() => {
-    toast.success(`✅ Demande ${statut} !`);
-    dispatch(getAllDemandesPerso()); // 🔄 Rafraîchir la liste après mise à jour
-  })
-  .catch(() => {
-    toast.error("❌ Erreur de mise à jour.");
-  });
+        .then(() => {
+          toast.success(`✅ Demande ${statut} !`);
+          dispatch(getAllDemandesPerso()); // 🔄 Rafraîchir la liste
+        })
+        .catch(() => {
+          toast.error("❌ Erreur de mise à jour.");
+        });
     }
   };
 
   const handleDelete = (id) => {
     if (window.confirm("❗ Supprimer cette demande ?")) {
       dispatch(deleteDemandePerso(id))
-        .then(() => toast.success("🗑️ Demande supprimée"))
+        .then(() => {
+          toast.success("🗑️ Demande supprimée");
+          dispatch(getAllDemandesPerso()); // ✅ Rafraîchir après suppression
+        })
         .catch(() => toast.error("❌ Échec de suppression"));
     }
   };
@@ -80,7 +83,8 @@ function AdminDemandesPerso() {
       ) : demandes.length > 0 ? (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {demandes
-            .toReversed()
+            .slice() // Pour ne pas muter l’original
+            .reverse()
             .map((demande, index) => (
               <motion.div
                 key={demande._id}
@@ -89,7 +93,6 @@ function AdminDemandesPerso() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.03 }}
               >
-                {/* 🗑️ Bouton de suppression */}
                 <button
                   onClick={() => handleDelete(demande._id)}
                   className="absolute top-2 right-2 text-red-600 hover:text-red-800 text-lg"
